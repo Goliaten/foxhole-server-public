@@ -80,6 +80,6 @@ dict_config = {
     "loggers": {
         config.LOGGER_NAME_PREFIX: {
             "handlers": ["printout", "error", "file_handler"],
-        }
+        },
     },
 }

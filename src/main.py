@@ -1,15 +1,9 @@
-import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from src.app.api import wars
-from src.app.core.config import settings
-
-# Set up logging
-logging.basicConfig(level=settings.LOG_LEVEL)
-logger = logging.getLogger(__name__)
-
-# Polling interval (in seconds)
-POLL_INTERVAL = 300  # 5 minutes
+from fastapi.responses import RedirectResponse
+from src.api import amazon_serv
+from src.core.Logger import Logger
+from src.core.setup import setup
 
 
 @asynccontextmanager
@@ -17,9 +11,10 @@ async def lifespan(app: FastAPI):
     """
     FastAPI lifespan manager. Runs on startup and shutdown.
     """
-    logger.info("Application startup...")
+    Logger().get().info("Application startup...")
+    setup()
     yield
-    logger.info("Application shutdown...")
+    Logger().get().info("Application shutdown...")
 
 
 # Initialize the FastAPI app
@@ -27,8 +22,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
 # Include the API router
-app.include_router(wars.router, tags=[])
+app.include_router(amazon_serv.router, tags=[])
+
+
+@app.get("/docs")
+async def redirect_to_docs():
+    return RedirectResponse("/docs", status_code=308)
+
 
 # @app.get("/")
 # async def redirect_to_docs():

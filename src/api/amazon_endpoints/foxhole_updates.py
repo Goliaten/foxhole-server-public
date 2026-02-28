@@ -1,13 +1,14 @@
 from fastapi import APIRouter
+from src.core.TypedDicts.ClientConfig import ClientConfig
+from src.core.Logger import Logger
 
-from app.core.TypedDicts.ClientConfig import ClientConfig
-
-router = APIRouter(prefix="/foxhole-updates", tags=["foxhole-updates"])
+router = APIRouter(tags=["foxhole-updates"])
 
 
 @router.get("/config/client_config.json", response_model=ClientConfig)
 async def client_config() -> ClientConfig:
-    print("path=/config/client_config.json")
+    Logger().get().debug("path=/config/client_config.json")
+
     out: ClientConfig = {
         "globalShardConfig": {
             "defaultShardId": 7,
@@ -46,7 +47,8 @@ async def client_config() -> ClientConfig:
     return out
 
 
+@router.get("/", response_model=None)
 @router.get("/{path:path}", response_model=None)
-async def default_path(path):
-    print(f"{path=}")
+async def default_path(path=""):
+    Logger().get().warning(f"{path=}")
     return
