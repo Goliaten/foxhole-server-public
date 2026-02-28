@@ -2,8 +2,11 @@ from datetime import datetime
 import logging
 import logging.config
 import os
+from pathlib import Path
 import sys
-import config
+import src.config as config
+
+Path(config.LOG_DIR).mkdir(exist_ok=True, parents=True)
 
 
 class exclude_warning(logging.Filter):

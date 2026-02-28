@@ -17,29 +17,11 @@ services:
         RUN pip install uv
         RUN uv pip install --system .
 
-        CMD ["uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8001"]
+        CMD ["uvicorn", "src.main:app", "--port", "8001"]
 
     container_name: fastapi_server
     restart: unless-stopped
     ports:
-      - "0.0.0.0:8001:${FLASK_PORT}"
+      - "8001:${FLASK_PORT}"
     environment:
       LOG_LEVEL: ${LOG_LEVEL}
-      DATABASE_URL: ${DOCKER_DB_URL}
-  # mariadb:
-  #   image: mariadb:10.11
-  #   container_name: fastapi_mariadb
-  #   restart: unless-stopped
-  #   environment:
-  #     MARIADB_USER: ${MARIADB_USER}
-  #     MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-  #     MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-  #     MARIADB_DATABASE: ${MARIADB_DATABASE}
-  #   ports:
-  #     - "${MARIADB_PORT}:${MARIADB_PORT}"
-  #   volumes:
-  #     - db_data:/var/lib/mysql
-
-volumes:
-  db_data:
-    driver: local

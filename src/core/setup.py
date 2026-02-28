@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import config
+import src.config as config
 from src.core.Logger import Logger
 
 
