@@ -1,0 +1,3 @@
+LOGGER_NAME_PREFIX = "main"
+LOG_LEVEL = "DEBUG"
+LOG_DIR = "logs"

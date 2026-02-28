@@ -5,7 +5,7 @@ from typing import List
 from fastapi import APIRouter, logger
 
 excluded_files: List[str] = ["__init__.py"]
-import_path = "src.app.api.v1.endpoints"
+import_path = "src.app.api.amazon_endpoint"
 path = import_path.replace(".", os.sep)
 
 
