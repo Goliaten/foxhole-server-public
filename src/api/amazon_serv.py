@@ -19,7 +19,7 @@ for module in glob.glob(os.path.join(path, "*.py")):
         imported_module = import_module(f"{import_path}.{file[:-3]}")
 
         router.include_router(imported_module.router)
-    except AttributeError as e:
+    except AttributeError:
         logger.logger.error(f"Failed to import {file} module's router.")
         import traceback
 
