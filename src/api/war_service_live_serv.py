@@ -7,10 +7,10 @@ from fastapi import APIRouter
 from src.core.Logger import Logger
 
 excluded_files: List[str] = ["__init__.py"]
-import_path = "src.api.amazon_endpoints"
+import_path = "src.api.war_service_live"
 path = import_path.replace(".", os.sep)
 
-Logger().get().debug("Importing amazon endpoints")
+Logger().get().debug("Importing war_service_live endpoints")
 router = APIRouter()
 for module in glob.glob(os.path.join(path, "*.py")):
     file = os.path.split(module)[-1]

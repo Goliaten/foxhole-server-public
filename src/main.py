@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from src.api import amazon_serv
+from src.api import amazon_serv, war_service_live_serv, war_support_live_serv
 from src.core.Logger import Logger
 from src.core.setup import setup
 
@@ -24,7 +24,9 @@ app = FastAPI(
 
 
 # Include the API router
-app.include_router(amazon_serv.router, tags=[])
+app.include_router(amazon_serv.router)
+app.include_router(war_service_live_serv.router)
+app.include_router(war_support_live_serv.router)
 
 
 @app.get("/docs")

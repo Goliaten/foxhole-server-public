@@ -39,10 +39,10 @@ async def client_config():
                 "bEnableJoinEventsWarden": False,
                 "colonialQueueWarning": "Auto",
                 "wardenQueueWarning": "Auto",
-                "warServiceExternalURL": "http://s3.amazonaws.com/war-service-live",
-                # "warServiceExternalURL": "https://war-service-live.foxholeservices.com/external",
-                "warSupportURL": "http://s3.amazonaws.com/war-support-live",
-                # "warSupportURL": "https://war-support-live.foxholeservices.com/api",
+                # "warServiceExternalURL": "http://s3.amazonaws.com/war-service-live/",
+                "warServiceExternalURL": "https://war-service-live.foxholeservices.com/external",
+                # "warSupportURL": "http://s3.amazonaws.com/war-support-live/",
+                "warSupportURL": "https://war-support-live.foxholeservices.com/api",
                 "travelMapMinimumOpenSlots": 2,
                 "bFactionLock": True,
             },
@@ -55,5 +55,5 @@ async def client_config():
 @router.get("/", response_model=None)
 @router.get("/{path:path}", response_model=None)
 async def default_path(path=""):
-    Logger().get().warning(f"{path=}")
+    Logger().get().warning(f"/foxhole-updates/{path=}")
     return
