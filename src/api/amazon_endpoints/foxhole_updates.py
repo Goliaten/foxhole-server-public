@@ -1,13 +1,15 @@
 from fastapi import APIRouter
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 from src.core.TypedDicts.ClientConfig import ClientConfig
 from src.core.Logger import Logger
 
-router = APIRouter(tags=["foxhole-updates"])
+router = APIRouter(prefix="/foxhole-updates")
 
 
 @router.get("/config/client_config.json", response_model=ClientConfig)
-async def client_config() -> ClientConfig:
-    Logger().get().debug("path=/config/client_config.json")
+async def client_config():
+    Logger().get().debug("path=/foxhole-updates/config/client_config.json")
 
     out: ClientConfig = {
         "globalShardConfig": {
@@ -37,14 +39,17 @@ async def client_config() -> ClientConfig:
                 "bEnableJoinEventsWarden": False,
                 "colonialQueueWarning": "Auto",
                 "wardenQueueWarning": "Auto",
-                "warServiceExternalURL": "https://war-service-live.foxholeservices.com/external",
-                "warSupportURL": "https://war-support-live.foxholeservices.com/api",
+                "warServiceExternalURL": "http://s3.amazonaws.com/war-service-live",
+                # "warServiceExternalURL": "https://war-service-live.foxholeservices.com/external",
+                "warSupportURL": "http://s3.amazonaws.com/war-support-live",
+                # "warSupportURL": "https://war-support-live.foxholeservices.com/api",
                 "travelMapMinimumOpenSlots": 2,
                 "bFactionLock": True,
             },
         ],
     }
-    return out
+
+    return JSONResponse(content=jsonable_encoder(out))
 
 
 @router.get("/", response_model=None)
