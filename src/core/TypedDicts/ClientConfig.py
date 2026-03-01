@@ -1,4 +1,4 @@
-from typing import List, TypedDict
+from typing import List, Optional, TypedDict
 
 
 class GlobalShardConfig(TypedDict):
@@ -20,14 +20,14 @@ class GlobalShardConfig(TypedDict):
 
 class AvailableShard(TypedDict):
     normalizedGlobalPopulation: float
-    descriptionType: str
+    descriptionType: Optional[str]
     shardName: str
     shardId: int
     bEnabled: bool
     bEnableJoinEventsColonial: bool
     bEnableJoinEventsWarden: bool
-    colonialQueueWarning: str
-    wardenQueueWarning: str
+    colonialQueueWarning: Optional[str]
+    wardenQueueWarning: Optional[str]
     warServiceExternalURL: str
     warSupportURL: str
     travelMapMinimumOpenSlots: int
