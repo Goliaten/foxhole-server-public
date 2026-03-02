@@ -20,7 +20,7 @@ docker compose up -d
 
 # Notes
 - Attempting to set up https server with trusted certification failed. Had to resolve to modifying binary and pointing to localhost. However even when returning whatever the amazon server sends, game fails to connect. To investigate if there is something else that amazon server returns and we dont see. Perhaps fill up the warServiceExternalURL/external/warReportSummary with some data to see if it starts up.
-# TODO make default endpoints forward all data
+- #TODO make default endpoints forward all data to the desired server, and see what comes out
 
 # Order of requests
 `{amazon-server}` is by default `https://s3.amazonaws.com`
