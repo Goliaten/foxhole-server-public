@@ -75,7 +75,7 @@ dict_config = {
             "formatter": "full",
             "filename": os.path.join(
                 config.LOG_DIR,
-                f"stockpile_scanner_{datetime.strftime(datetime.now(), '%Y%m')}.log",
+                f"foxhole_server_{datetime.strftime(datetime.now(), '%Y%m')}.log",
             ),
             "maxBytes": 4 * 1000 * 1000,
         },
