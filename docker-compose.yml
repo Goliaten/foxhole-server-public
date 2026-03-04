@@ -28,6 +28,8 @@ services:
       --forwarded-allow-ips="*"
     networks:
       - app_network
+    volumes:
+      - ./logs:/usr/src/logs
 
   nginx:
     build:
