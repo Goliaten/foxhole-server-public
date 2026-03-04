@@ -7,9 +7,43 @@ import src.config as cfg
 router = APIRouter(prefix="/war-service-live", tags=["war-service-live"])
 
 
+@router.websocket("/")
+async def default_websocket(websocket: WebSocket):
+    Logger().get().info("Websocket /war-service-live/")
+    await websocket.accept(subprotocol="foxhole-warservice-client:1.63.38.x")
+
+    Logger().get().debug("Accepted. Receiving data")
+    try:
+        while True:
+            Logger().get().debug("Receiving data")
+            message = await websocket.receive()
+            if message["type"] == "websocket.receive":
+                if "text" in message:
+                    Logger().get().debug(f"Received text: {message['text']}")
+                elif "bytes" in message:
+                    Logger().get().debug(f"Received bytes: {message['bytes']}")
+                else:
+                    Logger().get().debug(f"Received unknown message: {message}")
+            elif message["type"] == "websocket.disconnect":
+                Logger().get().debug(
+                    f"Client disconnected with code: {message.get('code', 'unknown')}"
+                )
+                break
+            else:
+                Logger().get().debug(
+                    f"Received message type: {message['type']}, data: {message}"
+                )
+    except Exception as e:
+        import traceback
+
+        traceback.print_exc()
+
+    Logger().get().info("Client disconnected from websocket.")
+
+
 # @router.api_route("/", response_model=None, methods=cfg.ALL_METHODS)
 @router.api_route("/{path:path}", response_model=None, methods=cfg.ALL_METHODS)
-async def default_path(request: Request, path: Optional[str] = ""):
+async def default_path(request: Request, path: str):
     Logger().get().debug(f"/war-service-live/{path=}")
     headers = dict(request.headers)
 
@@ -42,19 +76,3 @@ async def default_path(request: Request, path: Optional[str] = ""):
         }
     )
     return
-
-
-@router.websocket("/")
-async def default_websocket(websocket: WebSocket):
-    await websocket.accept()
-
-    try:
-        while True:
-            data = await websocket.receive_text()
-            print(data)
-    except Exception as e:
-        import traceback
-
-        traceback.print_exc()
-
-    print("Client disconnected")
