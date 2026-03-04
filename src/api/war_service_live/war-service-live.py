@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, WebSocket
 
 from src.core.Logger import Logger
 import src.config as cfg
@@ -7,7 +7,7 @@ import src.config as cfg
 router = APIRouter(prefix="/war-service-live", tags=["war-service-live"])
 
 
-@router.api_route("/", response_model=None, methods=cfg.ALL_METHODS)
+# @router.api_route("/", response_model=None, methods=cfg.ALL_METHODS)
 @router.api_route("/{path:path}", response_model=None, methods=cfg.ALL_METHODS)
 async def default_path(request: Request, path: Optional[str] = ""):
     Logger().get().debug(f"/war-service-live/{path=}")
@@ -42,3 +42,19 @@ async def default_path(request: Request, path: Optional[str] = ""):
         }
     )
     return
+
+
+@router.websocket("/")
+async def default_websocket(websocket: WebSocket):
+    await websocket.accept()
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+            print(data)
+    except Exception as e:
+        import traceback
+
+        traceback.print_exc()
+
+    print("Client disconnected")
