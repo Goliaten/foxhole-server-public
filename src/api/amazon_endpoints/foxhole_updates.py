@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from src.core.TypedDicts.ClientConfig import ClientConfig
+from src.core.Models.ClientConfig import ClientConfig
 from src.core.Logger import Logger
 import src.config as cfg
 
