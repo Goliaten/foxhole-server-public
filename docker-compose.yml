@@ -5,9 +5,7 @@ services:
       context: .
       dockerfile_inline: |
         FROM python:3.12.3
-
-        RUN mkdir -p /usr/src
-        COPY ./src /usr/src
+        
         COPY ./pyproject.toml /usr/pyproject.toml
 
         WORKDIR /usr
@@ -30,6 +28,7 @@ services:
       - app_network
     volumes:
       - ./logs:/usr/src/logs
+      - ./src:/usr/src
 
   nginx:
     build:
