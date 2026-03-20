@@ -31,6 +31,7 @@ docker compose up -d
 - request `GET` to `{war-service-live-server}warReportSummary`. There is no separator before warReportSummary. Most likely to fill up info about current war details. Although i haven't succeeded in querying this myself. #TODO do a manual query with specific headers
 - request `GET` to `{war-service-live-server}`. Looking at the headers, it's something about establishing a WebSocket connection to a server.
   - specific headers: *sec-websocket-key*, *sec-websocket-protocol*, *sec-websocket-extensions*, *sec-websocket-version*
+  - Game seems to be using https://libwebsockets.org/ websocket, as on failed connection it prints `LogLwsWebSockets: Warning: Lws(Warning): lws_client_handshake: got bad HTTP response '404'\n LogClient: Error: FExternalWarService::OnConnectionError Unable to connect` into console
 - request `GET` to `{war-support-live-server}/modReply`. Some checkup with user's data. Maybe VAC ban check or something.
   - specific headers: *x-steam-id*, *x-steam-token*
 This is as far as I've analysed. Next the client will try to make a connection to `{war-service-live-server}` over and over. #TODO experiment with this endpoint
