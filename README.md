@@ -35,3 +35,5 @@ docker compose up -d
 - request `GET` to `{war-support-live-server}/modReply`. Some checkup with user's data. Maybe VAC ban check or something.
   - specific headers: *x-steam-id*, *x-steam-token*
 This is as far as I've analysed. Next the client will try to make a connection to `{war-service-live-server}` over and over. #TODO experiment with this endpoint
+- Other endpoints that exist in code code: `/socketExternal` and `/internal/worldconquest/`. Both of them replace `/external` at some point
+- Other endpoints: `/modReply/acceptModReply`, `/report`, `/reportPlayer`, `/admincommand`
