@@ -21,6 +21,8 @@ docker compose up -d
 # Notes
 - Attempting to set up https server with trusted certification failed. Had to resolve to modifying binary and pointing to localhost. However even when returning whatever the amazon server sends, game fails to connect. To investigate if there is something else that amazon server returns and we dont see. Perhaps fill up the warServiceExternalURL/external/warReportSummary with some data to see if it starts up.
 - #TODO make default endpoints forward all data to the desired server, and see what comes out
+- Forwarding data to https server after receiving it with http didn't work. Remote server keeps sending 404 errors, even after sending messages to the same endpoints as the game.
+- Attempted a MiTM Proxy. Didnt work. Client spews that TLS handshake failed due to untrusted certificate: "SSL error: unable to get local issuer certificate (preverify_ok=0;err=20;depth=0)". Tried changing the return of function printing this out, but it didn't help. Most likely didn't change it properly.
 
 # Order of requests
 `{amazon-server}` is by default `https://s3.amazonaws.com`
@@ -31,7 +33,8 @@ docker compose up -d
 - request `GET` to `{war-service-live-server}warReportSummary`. There is no separator before warReportSummary. Most likely to fill up info about current war details. Although i haven't succeeded in querying this myself. #TODO do a manual query with specific headers
 - request `GET` to `{war-service-live-server}`. Looking at the headers, it's something about establishing a WebSocket connection to a server.
   - specific headers: *sec-websocket-key*, *sec-websocket-protocol*, *sec-websocket-extensions*, *sec-websocket-version*
-  - Game seems to be using https://libwebsockets.org/ websocket, as on failed connection it prints `LogLwsWebSockets: Warning: Lws(Warning): lws_client_handshake: got bad HTTP response '404'\n LogClient: Error: FExternalWarService::OnConnectionError Unable to connect` into console
+  - Game seems to be using https://libwebsockets.org/ websocket, as on failed connection it prints `LogLwsWebSockets: Warning: Lws(Warning): lws_client_handshake: got bad HTTP response '404'\n LogClient: Error: FExternalWarService::OnConnectionError Unable to connect` into console.
+  - After connecting it sends some token, and steam-id in a byte stream.
 - request `GET` to `{war-support-live-server}/modReply`. Some checkup with user's data. Maybe VAC ban check or something.
   - specific headers: *x-steam-id*, *x-steam-token*
 This is as far as I've analysed. Next the client will try to make a connection to `{war-service-live-server}` over and over. #TODO experiment with this endpoint
