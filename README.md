@@ -24,7 +24,7 @@ docker compose up -d
 - Forwarding data to https server after receiving it with http didn't work. Remote server keeps sending 404 errors, even after sending messages to the same endpoints as the game.
 - Attempted a MiTM Proxy. Didnt work. Client spews that TLS handshake failed due to untrusted certificate: "SSL error: unable to get local issuer certificate (preverify_ok=0;err=20;depth=0)". Tried changing the return of function printing this out, but it didn't help. Most likely didn't change it properly.
 - Other endpoints that exist in code code: `/socketExternal` and `/internal/worldconquest/`. Both of them replace `/external` at some point
-- Other endpoints: `/modReply`, `/acceptModReply`, `/report`, `/reportPlayer`, `/admincommand`
+- Other endpoints: `/modReply`, `modReply/acceptModReply`, `/report`, `/reportPlayer`, `/admincommand`
 
 # Order of requests
 `{amazon-server}` is by default `https://s3.amazonaws.com`
