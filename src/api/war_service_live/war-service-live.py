@@ -1,55 +1,82 @@
+import asyncio
+import re
+import websockets
+import websockets.headers as wsh
+
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from typing import Optional
 from fastapi import APIRouter, Request, WebSocket
 
 from src.core.Logger import Logger
 import src.config as cfg
 
+wsh._token_re = re.compile(r"[-!#$%&\':*+.^_`|~0-9a-zA-Z]+")
+
 router = APIRouter(prefix="/war-service-live", tags=["war-service-live"])
-BASE_URL = "https://war-service-live.foxholeservices.com/external"
+BASE_URL = "wss://war-service-live.foxholeservices.com/socketExternal"
+
+
+async def forward(source: WebSocket, destination: websockets.ClientConnection):
+    """Forwards data from a FastAPI WebSocket to an external WebSocket."""
+    try:
+        while True:
+            Logger().get().debug("Receiving data from client")
+            data = await source.receive()
+            Logger().get().debug("Data received")
+            Logger().get().debug(f"Forwarding data to server: {data}")
+            await destination.send(data["bytes"])
+            Logger().get().debug("Data forwarded")
+    except Exception:
+        import traceback
+
+        print(f"Error: {traceback.format_exc()}")
+
+
+async def reverse_forward(source: websockets.ClientConnection, destination: WebSocket):
+    """Forwards data from an external WebSocket back to the FastAPI client."""
+    try:
+        while True:
+            Logger().get().debug("Receiving data from server")
+            data = await source.recv()
+            Logger().get().debug("Data received")
+            Logger().get().debug(f"Forwarding data to client: {data}")
+            await destination.send_text(data)
+            Logger().get().debug("Data forwarded")
+    except Exception:
+        import traceback
+
+        print(f"Error: {traceback.format_exc()}")
 
 
 @router.websocket("/")
 async def default_websocket(websocket: WebSocket):
     Logger().get().info("Websocket /war-service-live/")
-    Logger().get().debug(f"{websocket.headers=}")
-    Logger().get().debug(f"{websocket.base_url=}")
-    Logger().get().debug(f"{websocket.query_params=}")
-    Logger().get().debug(f"{websocket.path_params=}")
-    await websocket.accept(subprotocol="foxhole-warservice-client:1.63.40.x")
+    await websocket.accept()
+    Logger().get().debug("Accepted connection")
 
-    Logger().get().debug("Accepted. Receiving data")
+    subprotocols = [websockets.Subprotocol("foxhole-warservice-client:1.63.40.x")]
+
+    # Establish connection to the external server
     try:
-        while True:
-            to_send = None
-            Logger().get().debug("Receiving data")
-            message = await websocket.receive()
-            if message["type"] == "websocket.receive":
-                if "text" in message:
-                    to_send = message["text"]
-                    Logger().get().debug(f"Received text: {to_send}")
-                elif "bytes" in message:
-                    to_send = message["bytes"]
-                    Logger().get().debug(f"Received bytes: {to_send}")
-                else:
-                    Logger().get().debug(f"Received unknown message: {message}")
-            elif message["type"] == "websocket.disconnect":
-                Logger().get().debug(
-                    f"Client disconnected with code: {message.get('code', 'unknown')}"
-                )
-                break
-            else:
-                Logger().get().debug(
-                    f"Received message type: {message['type']}, data: {message}"
-                )
-
-            if to_send:
-                ...
+        async with websockets.connect(
+            BASE_URL, subprotocols=subprotocols
+        ) as external_ws:
+            # Run both forwarding loops concurrently
+            await asyncio.gather(
+                forward(websocket, external_ws), reverse_forward(external_ws, websocket)
+            )
+    except WebSocketDisconnect:
+        print("Client disconnected.")
     except Exception as e:
         import traceback
 
-        traceback.print_exc()
-
-    Logger().get().info("Client disconnected from websocket.")
+        print(f"Error: {traceback.format_exc()}")
+    finally:
+        # Ensure the local socket is closed if it hasn't been already
+        try:
+            await websocket.close()
+        except Exception:
+            pass
 
 
 # @router.api_route("/", response_model=None, methods=cfg.ALL_METHODS)
