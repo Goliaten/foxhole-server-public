@@ -13,6 +13,7 @@ import src.config as cfg
 wsh._token_re = re.compile(r"[-!#$%&\':*+.^_`|~0-9a-zA-Z]+")
 
 router = APIRouter(prefix="/war-service-live", tags=["war-service-live"])
+# TODO make the base URL not constant
 BASE_URL = "wss://war-service-live.foxholeservices.com/socketExternal"
 
 
@@ -62,6 +63,7 @@ async def default_websocket(websocket: WebSocket):
             BASE_URL, subprotocols=subprotocols
         ) as external_ws:
             # Run both forwarding loops concurrently
+            # FIXME fix error where server incorrectly returns data to server/client
             await asyncio.gather(
                 forward(websocket, external_ws), reverse_forward(external_ws, websocket)
             )
