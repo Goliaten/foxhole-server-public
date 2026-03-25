@@ -55,7 +55,8 @@ async def default_websocket(websocket: WebSocket):
     await websocket.accept()
     Logger().get().debug("Accepted connection")
 
-    subprotocols = [websockets.Subprotocol("foxhole-warservice-client:1.63.40.x")]
+    # TODO have the subprotocol be taken from the game's request header
+    subprotocols = [websockets.Subprotocol("foxhole-warservice-client:1.63.41.x")]
 
     # Establish connection to the external server
     try:
