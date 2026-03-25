@@ -29,7 +29,7 @@ async def forward(source: WebSocket, destination: websockets.ClientConnection):
     except Exception:
         import traceback
 
-        print(f"Error: {traceback.format_exc()}")
+        Logger().get().error(f"Error: {traceback.format_exc()}")
 
 
 async def reverse_forward(source: websockets.ClientConnection, destination: WebSocket):
@@ -45,7 +45,7 @@ async def reverse_forward(source: websockets.ClientConnection, destination: WebS
     except Exception:
         import traceback
 
-        print(f"Error: {traceback.format_exc()}")
+        Logger().get().error(f"Error: {traceback.format_exc()}")
 
 
 @router.websocket("/")
@@ -66,17 +66,21 @@ async def default_websocket(websocket: WebSocket):
                 forward(websocket, external_ws), reverse_forward(external_ws, websocket)
             )
     except WebSocketDisconnect:
-        print("Client disconnected.")
+        Logger().get().error("Client disconnected.")
     except Exception as e:
         import traceback
 
-        print(f"Error: {traceback.format_exc()}")
+        Logger().get().error(f"Error: {traceback.format_exc()}")
     finally:
         # Ensure the local socket is closed if it hasn't been already
         try:
             await websocket.close()
+            Logger().get().info("Closed websocket succesfully")
         except Exception:
-            pass
+            import traceback
+
+            Logger().get().error("Unable to close websocket")
+            Logger().get().error(traceback.format_exc())
 
 
 # @router.api_route("/", response_model=None, methods=cfg.ALL_METHODS)
@@ -113,4 +117,3 @@ async def default_path(request: Request, path: str):
             "body": body,
         }
     )
-    return
