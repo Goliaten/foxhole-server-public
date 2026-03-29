@@ -25,6 +25,8 @@ docker compose up -d
 - Attempted a MiTM Proxy. Didnt work. Client spews that TLS handshake failed due to untrusted certificate: "SSL error: unable to get local issuer certificate (preverify_ok=0;err=20;depth=0)". Tried changing the return of function printing this out, but it didn't help. Most likely didn't change it properly.
 - Other endpoints that exist in code code: `/socketExternal` and `/internal/worldconquest/`. Both of them replace `/external` at some point
 - Other endpoints: `/modReply`, `modReply/acceptModReply`, `/report`, `/reportPlayer`, `/admincommand`
+- Another API endpoint? `/warRecord/list` for `war-service-live` - `https://war-service-live.foxholeservices.com/external/warRecord/list`. Shows past war stats and chievment progress
+{'url': 'http://localhost/war-service-live/warRecord/list', 'method': 'GET', 'path': 'warRecord/list', 'client_host': '172.19.0.2', 'headers': {'connection': 'Upgrade', 'host': 'localhost', 'content-length': '0', 'accept': '*/*', 'accept-encoding': 'deflate, gzip', 'user-agent': 'War/++UE4+Release-4.24-CL-0 Windows/6.2.9200.1.256.64bit'}, 'query_params': {}, 'body': None}
 
 # Order of requests
 `{amazon-server}` is by default `https://s3.amazonaws.com`
@@ -44,6 +46,3 @@ docker compose up -d
     - sending the data, that was received from the game returns 4002 #TODO experiment with this
 - request `GET` to `{war-support-live-server}/modReply`. Some checkup with user's data. Maybe VAC ban check or something.
   - specific headers: *x-steam-id*, *x-steam-token*
-
-
-This is as far as I've analysed. Next the client will try to make a connection to `{war-service-live-server}` over and over.
