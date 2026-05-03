@@ -15,6 +15,7 @@
 - [ ] make a hooking mod with ue4ss on EVERY function to find out which one is responsible for data de-/serialization
 - [ ] dig into the game to find where serialization and deserialization happens
 - [ ] mock server responses and launch the game with gbe emulator
+- [ ] replace IP in response 8 and see what happens
 
 # Setup
 [to the top](#table-of-contents)
