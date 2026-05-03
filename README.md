@@ -13,6 +13,7 @@
 # TODO
 - [ ] test the following endpoint: request `GET` to `{war-service-live-server}warReportSummary`
 - [ ] make a hooking mod with ue4ss on EVERY function to find out which one is responsible for data de-/serialization
+- [ ] dig into the game to find where serialization and deserialization happens
 - [ ] mock server responses and launch the game with gbe emulator
 
 # Setup
@@ -67,7 +68,7 @@ docker compose up -d
       - 3 - client - if first call to server(type 1) fails, client will sent type 3 without steam token (example in `foxhole_server_20260503114009.log`)
       - 4 - server - response to initial message, contains a lot of data about user's current state (inventory, uniform. skin tone, activity log, spawn points)
       - 5 - client
-      - 8 - server
+      - 8 - server - IP inside this message points to a Hetzner data center in Falkenstein, Sachsen, Germany. Probably closest to my location. However why is it not pointing to steam servers? Pinging that IP results in no response.
       - 9 - server
       - 10 - client
       - 14a - server - long version
