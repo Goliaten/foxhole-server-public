@@ -1,6 +1,7 @@
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
+- [TODO](#todo)
 - [Setup](#setup)
   - [dev build](#dev-build)
   - [altering .exe](#altering-exe)
@@ -8,6 +9,11 @@
 - [Notes](#notes)
 - [Order of requests](#order-of-requests)
 - [Websocket order](#websocket-order)
+
+# TODO
+- [ ] test the following endpoint: request `GET` to `{war-service-live-server}warReportSummary`
+- [ ] make a hooking mod with ue4ss on EVERY function to find out which one is responsible for data de-/serialization
+- [ ] mock server responses and launch the game with gbe emulator
 
 # Setup
 [to the top](#table-of-contents)
@@ -21,7 +27,7 @@ docker compose up -d --build
 ## altering .exe
 Open the `War-Win64-Shipping.exe` with Ghidra, and decompile it.
 Change the `https://s3.amazonaws.com` into `http://localhost` in the string containing:
-- `https://s3.amazonaws.com/foxhole-updates/newsfeed/news.json`
+<!-- - `https://s3.amazonaws.com/foxhole-updates/newsfeed/news.json` -->
 - `https://s3.amazonaws.com/foxhole-updates/config/client_config.json`
 
 ## Running
@@ -52,7 +58,7 @@ docker compose up -d
 - request `GET` to `{amazon-server}/foxhole-updates/newsfeed/news.json` to get main page news
 - request ? to `{amazon-server}/foxhole-updates/config/client_config.json` to get shard info, **war-service-live-server** and **war-support-live-server**
 - click play
-- request `GET` to `{war-service-live-server}warReportSummary`. There is no separator before warReportSummary. Most likely to fill up info about current war details. Although i haven't succeeded in querying this myself. #TODO do a manual query with specific headers
+- request `GET` to `{war-service-live-server}warReportSummary`. There is no separator before warReportSummary. Most likely to fill up info about current war details. Although i haven't succeeded in querying this myself.
 - request `GET` to `{war-service-live-server}`. The order of these exchanges will be described in [another chapter](#websocket-order)
   - This is a websocket connection. Subprotocol dictates the game version: `foxhole-warservice-client:1.63.41.x` for example.
   - Messages are encoded in FlatBuffers. It is assumed that root table has message_type and message_content inside it.
