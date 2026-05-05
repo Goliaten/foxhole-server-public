@@ -80,14 +80,14 @@ docker compose up -d
       - 14a - server - long version
       - 14b - server - short version
       - 15 - server
-      - 16 - client
-      - 17 - server
+      - 16 - client - related to opening map(?)
+      - 17 - server - related to opening map(?)
       - 18 - client
       - 19 - server
       - 20 - client
       - 21 - server
       - 22 - client/server
-      - 23 - client/server
+      - 23 - client/server - related to getting data from server after entering region(?)
   - Some messages have serialised FArchive within them.
   - Currently it is difficult to decode, alter, replicate these packets due to requirement of `.fbs` schema files for automated en-/decoding. Limited progress has been made in decoding message 1 and 4, however there is then a need for deserialising FArchive.
 - request `GET` to `{war-support-live-server}/modReply`. Some checkup with user's data. Maybe VAC ban check or something.
