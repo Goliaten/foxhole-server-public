@@ -104,9 +104,9 @@ Senders:
 
 1. c1 -> s4 -> c5 -> s9 -> s8
    1. if IP in s8 doesn't resolve properly, client sends back c6 packet
-2. Then exchange loop with c24 <-> s24 for several packets
+2. Then exchange loop with c23 <-> s23 for several packets
 3. After that is an unknown order. Here are some observed events:
-   - c23 <-> s23 exchange
+   - c22 <-> s22 exchange
    - constant stream of s14
    - constant, but sometimes interrupted stream of s15
    - c16 -> s17 response is not instant, but soon enough
