@@ -68,7 +68,7 @@ docker compose up -d
 - request `GET` to `{war-service-live-server}`. The order of these exchanges will be described in [another chapter](#websocket-order)
   - This is a websocket connection. Subprotocol dictates the game version: `foxhole-warservice-client:1.63.41.x` for example.
   - Messages are encoded in FlatBuffers. It is assumed that root table has message_type and message_content inside it.
-    - There are currently 15 message types discovered after brief testing:
+    - These are the currently discovered message types discovered:
       - 1 - client - initial message sent, contains steam-token and steam-id
       - 3 - client - if first call to server(type 1) fails, client will sent type 3 without steam token (example in `foxhole_server_20260503114009.log`)
       - 4 - server - response to initial message, contains a lot of data about user's current state (inventory, uniform. skin tone, activity log, spawn points)
