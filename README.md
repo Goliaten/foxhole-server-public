@@ -15,7 +15,9 @@
 - [ ] make a hooking mod with ue4ss on EVERY function to find out which one is responsible for data de-/serialization
 - [ ] dig into the game to find where serialization and deserialization happens
 - [ ] mock server responses and launch the game with gbe emulator
-- [ ] replace IP in response 8 and see what happens
+- [x] replace IP in response 8 and see what happens
+  - Hmm, replacing the IP seems to lock the game in a `waiting in queue` cycle after pressing deploy button.
+- [ ] Perform deeper analysis, if we can mock the server behind IP in type 8 message
 
 # Setup
 [to the top](#table-of-contents)
@@ -51,6 +53,8 @@ docker compose up -d
   - News feed
   - Starting data of the user
   - Authenticating player using steam-id and steam-token
+- Restarting server while the game is running, results in momentary message about foxhole services being unavailable.
+- Replacing the IP in type 8 seems to lock the game in a `waiting in queue` cycle after pressing deploy button.
 
 # Order of requests
 [to the top](#table-of-contents)
