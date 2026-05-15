@@ -38,10 +38,10 @@ async def reverse_forward(source: websockets.ClientConnection, destination: WebS
     try:
         while True:
             Logger().get().debug("Receiving data from server")
-            data = await source.recv()
+            data = await source.recv(decode=False)
             Logger().get().debug("Data received")
             Logger().get().debug(f"Forwarding data to client: {data}")
-            await destination.send_text(data)
+            await destination.send_bytes(data)
             Logger().get().debug("Data forwarded")
     except Exception:
         import traceback
