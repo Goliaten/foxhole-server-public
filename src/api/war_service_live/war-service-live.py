@@ -3,9 +3,8 @@ import re
 import websockets
 import websockets.headers as wsh
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from typing import Optional
-from fastapi import APIRouter, Request, WebSocket
+from fastapi import WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Request
 
 from src.core.Logger import Logger
 import src.config as cfg
@@ -88,7 +87,7 @@ async def default_websocket(websocket: WebSocket):
             )
     except WebSocketDisconnect:
         Logger().get().error("Client disconnected.")
-    except Exception as e:
+    except Exception:
         import traceback
 
         Logger().get().error(f"Error: {traceback.format_exc()}")
