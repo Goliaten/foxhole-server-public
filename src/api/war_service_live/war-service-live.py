@@ -8,6 +8,7 @@ from fastapi import APIRouter, Request
 
 from src.core.Logger import Logger
 import src.config as cfg
+from src.helpers.packer_analyzer import PacketAnalyzer
 
 # HACK websockets module doesn't accept `:` as a valid character. This modifies the REGEX used in the module to allow semicolons
 wsh._token_re = re.compile(r"[-!#$%&\':*+.^_`|~0-9a-zA-Z]+")
@@ -23,18 +24,24 @@ async def forward(source: WebSocket, destination: websockets.ClientConnection):
     try:
         while True:
             Logger().get().debug("Receiving data from client")
-            data = await source.receive()
+            message = await source.receive()
             Logger().get().debug("Data received")
 
-            if data.get("type") == "websocket.disconnect":
+            if message.get("type") == "websocket.disconnect":
                 Logger().get().info(
                     "Client sent `websocket.disconnect` message. Disconnecting from server"
                 )
                 await destination.close()
                 break
 
-            Logger().get().debug(f"Forwarding data to server: {data}")
-            await destination.send(data["bytes"])
+            data = message["bytes"]
+            opcode = PacketAnalyzer.get_packet_opcode(data)
+
+            Logger().get().debug(
+                f"client -> server FB opcode={opcode} len={len(data)} hexdata={data.hex()}"
+            )
+            Logger().get().debug("Forwarding data to server")
+            await destination.send(data)
             Logger().get().debug("Data forwarded")
     except Exception:
         import traceback
@@ -50,7 +57,12 @@ async def reverse_forward(source: websockets.ClientConnection, destination: WebS
             Logger().get().debug("Receiving data from server")
             data = await source.recv(decode=False)
             Logger().get().debug("Data received")
-            Logger().get().debug(f"Forwarding data to client: {data}")
+
+            opcode = PacketAnalyzer.get_packet_opcode(data)
+            Logger().get().debug(
+                f"server -> client FB opcode={opcode} len={len(data)} hexdata={data.hex()}"
+            )
+            Logger().get().debug("Forwarding data to client")
             await destination.send_bytes(data)
             Logger().get().debug("Data forwarded")
     except Exception:
