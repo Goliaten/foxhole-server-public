@@ -15,6 +15,7 @@ wsh._token_re = re.compile(r"[-!#$%&\':*+.^_`|~0-9a-zA-Z]+")
 router = APIRouter(prefix="/war-service-live", tags=["war-service-live"])
 # TODO make the base URL not constant
 BASE_URL = "wss://war-service-live.foxholeservices.com/socketExternal"
+DEFAULT_WEBSOCKET_PROTOCOL = "foxhole-warservice-client:1.63.41.x"
 
 
 async def forward(source: WebSocket, destination: websockets.ClientConnection):
@@ -64,16 +65,24 @@ async def default_websocket(websocket: WebSocket):
     await websocket.accept()
     Logger().get().debug("Accepted connection")
 
-    # TODO have the subprotocol be taken from the game's request header
-    subprotocols = [websockets.Subprotocol("foxhole-warservice-client:1.63.41.x")]
+    Logger().get().debug(f"{websocket.headers=}")
+    subprotocols = [
+        websockets.Subprotocol(
+            websocket.headers.get("sec-websocket-protocol", DEFAULT_WEBSOCKET_PROTOCOL)
+        )
+    ]
+    if "sec-websocket-protocol" not in websocket.headers:
+        Logger().get().error(
+            f"`sec-websocket-protocol` header not found in client upgrade message. Defaulting to `{DEFAULT_WEBSOCKET_PROTOCOL}`"
+        )
+    else:
+        Logger().get().info(f"Using subprotocols: {subprotocols}")
 
     # Establish connection to the external server
     try:
         async with websockets.connect(
             BASE_URL, subprotocols=subprotocols
         ) as external_ws:
-            # Run both forwarding loops concurrently
-            # FIXME fix error where server incorrectly returns data to server/client
             await asyncio.gather(
                 forward(websocket, external_ws), reverse_forward(external_ws, websocket)
             )
@@ -101,13 +110,9 @@ async def default_path(request: Request, path: str):
     Logger().get().debug(f"/war-service-live/{path=}")
     headers = dict(request.headers)
 
-    # Query parameters
     query_params = dict(request.query_params)
-
-    # Client IP (if behind a proxy, use X-Forwarded-For)
     client_host = request.client.host if request.client else None
 
-    # Body (only for POST, PUT, PATCH, etc.)
     body = None
     try:
         body = await request.body()
