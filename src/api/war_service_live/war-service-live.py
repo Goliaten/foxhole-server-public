@@ -24,6 +24,14 @@ async def forward(source: WebSocket, destination: websockets.ClientConnection):
             Logger().get().debug("Receiving data from client")
             data = await source.receive()
             Logger().get().debug("Data received")
+
+            if data.get("type") == "websocket.disconnect":
+                Logger().get().info(
+                    "Client sent `websocket.disconnect` message. Disconnecting from server"
+                )
+                await destination.close()
+                break
+
             Logger().get().debug(f"Forwarding data to server: {data}")
             await destination.send(data["bytes"])
             Logger().get().debug("Data forwarded")
@@ -37,6 +45,7 @@ async def reverse_forward(source: websockets.ClientConnection, destination: WebS
     """Forwards data from an external WebSocket back to the FastAPI client."""
     try:
         while True:
+            # FIXME after client disconnects, server can still send messages. Although this doesn't cause an issue, it makes an exception in logs
             Logger().get().debug("Receiving data from server")
             data = await source.recv(decode=False)
             Logger().get().debug("Data received")
