@@ -1,0 +1,44 @@
+{
+  "title": "ClientConfig",
+  "bDisableOneWorld": false,
+  "availableShardList": [
+    {
+      "shardName": "DevBranch",
+      "shardId": 4,
+      "bEnabled": true,
+      "bEnableJoinEvents ": false,
+      "colonialQueueWarning": "Auto",
+      "wardenQueueWarning": "Auto",
+      "warServiceExternalURL": "http://127.0.0.1:9998/external",
+      "maxOperationMembers": 0
+    },
+    {
+      "shardName": "Internal",
+      "shardId": 3,
+      "bEnabled": true,
+      "bEnableJoinEvents ": false,
+      "colonialQueueWarning": "Auto",
+      "wardenQueueWarning": "Auto",
+      "warServiceExternalURL": "http://127.0.0.1:9998/external",
+      "maxOperationMembers": 0
+    },
+    {
+      "shardName": "Live",
+      "shardId": 5,
+      "bEnabled": true,
+      "bEnableJoinEvents ": false,
+      "colonialQueueWarning": "Auto",
+      "wardenQueueWarning": "Auto",
+      "warServiceExternalURL": "http://127.0.0.1:9998/external",
+      "maxOperationMembers": 0
+    }
+  ],
+  "conquestRestartTimeList": [
+    {
+      "day": 1,
+      "hour": 15,
+      "minute": 0
+    }
+  ],
+  "conquestNews": []
+}
