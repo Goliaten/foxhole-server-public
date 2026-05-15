@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Response
 
 from src.core.Logger import Logger
 import src.config as cfg
@@ -10,7 +10,7 @@ router = APIRouter(prefix="/war-support-live", tags=["war-support-live"])
 
 @router.api_route("/", response_model=None, methods=cfg.ALL_METHODS)
 @router.api_route("/{path:path}", response_model=None, methods=cfg.ALL_METHODS)
-async def default_path(request: Request, path: Optional[str] = ""):
+async def default_path(request: Request, path: Optional[str] = "") -> Response:
     Logger().get().debug(f"/war-support-live/{path=}")
     headers = dict(request.headers)
 
@@ -42,4 +42,4 @@ async def default_path(request: Request, path: Optional[str] = ""):
             "body": body,
         }
     )
-    return
+    return Response(status_code=204)

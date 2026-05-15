@@ -3,7 +3,7 @@ import re
 import websockets
 import websockets.headers as wsh
 
-from fastapi import WebSocket, WebSocketDisconnect
+from fastapi import Response, WebSocket, WebSocketDisconnect
 from fastapi import APIRouter, Request
 
 from src.core.Logger import Logger
@@ -106,7 +106,7 @@ async def default_websocket(websocket: WebSocket):
 
 # @router.api_route("/", response_model=None, methods=cfg.ALL_METHODS)
 @router.api_route("/{path:path}", response_model=None, methods=cfg.ALL_METHODS)
-async def default_path(request: Request, path: str):
+async def default_path(request: Request, path: str) -> Response:
     Logger().get().debug(f"/war-service-live/{path=}")
     headers = dict(request.headers)
 
@@ -134,3 +134,4 @@ async def default_path(request: Request, path: str):
             "body": body,
         }
     )
+    return Response(status_code=204)

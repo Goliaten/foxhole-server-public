@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Response
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from src.core.Models.ClientConfig import ClientConfig
@@ -147,7 +147,7 @@ async def client_config():
 
 @router.api_route("/", response_model=None, methods=cfg.ALL_METHODS)
 @router.api_route("/{path:path}", response_model=None, methods=cfg.ALL_METHODS)
-async def default_path(request: Request, path=""):
+async def default_path(request: Request, path="") -> Response:
     Logger().get().warning(f"/foxhole-updates/{path=}")
     headers = dict(request.headers)
 
@@ -179,4 +179,4 @@ async def default_path(request: Request, path=""):
             "body": body,
         }
     )
-    return
+    return Response(status_code=204)
