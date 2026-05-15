@@ -9,6 +9,7 @@ from fastapi import APIRouter, Request
 from src.core.Logger import Logger
 import src.config as cfg
 
+# HACK websockets module doesn't accept `:` as a valid character. This modifies the REGEX used in the module to allow semicolons
 wsh._token_re = re.compile(r"[-!#$%&\':*+.^_`|~0-9a-zA-Z]+")
 
 router = APIRouter(prefix="/war-service-live", tags=["war-service-live"])
