@@ -27,7 +27,7 @@ services:
     networks:
       - app_network
     volumes:
-      - ./logs:/usr/src/logs # BUG putting volume in another volume causes logs to be save to 2 different directories
+      - ./logs:/usr/logs
       - ./src:/usr/src
 
   nginx:
