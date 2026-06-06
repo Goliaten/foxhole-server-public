@@ -6,7 +6,7 @@ from fastapi import APIRouter
 
 from src.core.Logger import Logger
 
-excluded_files: List[str] = ["__init__.py", "war-service-live.py"]
+excluded_files: List[str] = ["__init__.py", "war-service-live MiTM.py"]
 import_path = "src.api.war_service_live"
 path = import_path.replace(".", os.sep)
 

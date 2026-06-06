@@ -71,7 +71,7 @@ docker compose up -d
     - These are the currently discovered message types discovered:
       - 1 - client - initial message sent, contains steam-token and steam-id
       - 3 - client - if first call to server(type 1) fails, client will sent type 3 without steam token (example in `foxhole_server_20260503114009.log`)
-      - 4 - server - response to initial message, contains a lot of data about user's current state (inventory, uniform. skin tone, activity log, spawn points)
+      - 4 - server - response to opcode 1 and 3, contains a lot of data about user's current state (inventory, uniform. skin tone, activity log, spawn points)
       - 5 - client
       - 6 - client - seems to be an empty keep-alive packet? Cacket sent after replacing IP in type 8 packet with a localhost, which caused the game to hand at `waiting in queue 0 players ahead` after clicking deploy.
       - 8 - server - IP inside this message points to a Hetzner data center in Falkenstein, Sachsen, Germany. Probably closest to my location. However why is it not pointing to steam servers? Pinging that IP results in no response.
