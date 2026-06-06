@@ -13,11 +13,18 @@
 # TODO
 - [ ] test the following endpoint: request `GET` to `{war-service-live-server}warReportSummary`
 - [ ] make a hooking mod with ue4ss on EVERY function to find out which one is responsible for data de-/serialization
-- [ ] dig into the game to find where serialization and deserialization happens
+- [x] dig into the game to find where serialization and deserialization happens
 - [ ] mock server responses and launch the game with gbe emulator
 - [x] replace IP in response 8 and see what happens
   - Hmm, replacing the IP seems to lock the game in a `waiting in queue` cycle after pressing deploy button.
 - [ ] Perform deeper analysis, if we can mock the server behind IP in type 8 message
+- [ ] keep mocking opcodes, see how far can we go with just replying with dummy messages
+  - [x] op 4
+  - [x] op 9
+  - [x] op 8
+  - [ ] op 23
+  - [ ] and beyond
+- [ ] Make a websocket for `{war-service-live-server}/shardStatus`
 
 # Setup
 [to the top](#table-of-contents)
@@ -92,6 +99,23 @@ docker compose up -d
   - Currently it is difficult to decode, alter, replicate these packets due to requirement of `.fbs` schema files for automated en-/decoding. Limited progress has been made in decoding message 1 and 4, however there is then a need for deserialising FArchive.
 - request `GET` to `{war-support-live-server}/modReply`. Some checkup with user's data. Maybe VAC ban check or something.
   - specific headers: *x-steam-id*, *x-steam-token*
+- request `POST` to `{war-support-live-server}/modReply/acceptModReply'`. Log `foxhole_server_202603.log`
+  - I have no idea how this was sent only once. However, this has caused me to display `null` message from time to time when logging in. This may be able to set something on the server, which `/modReply` then queries
+  - full details:
+```
+[2026-03-24 23:17:02,375] [DEBUG|10] [war-support-live.py:default_path] {'url': 'http://localhost/war-support-live/modReply/acceptModReply', 'method': 'POST', 'path': 'modReply/acceptModReply', 'client_host': '172.19.0.1', 'headers': {'host': 'localhost', 'x-real-ip': '172.19.0.1', 'x-forwarded-for': '172.19.0.1', 'x-forwarded-proto': 'http', 'x-forwarded-host': 'localhost', 'x-forwarded-port': '80', 'connection': 'close', 'content-length': '27', 'accept': '*/*', 'accept-encoding': 'deflate, gzip', 'content-type': 'application/json', 'x-steam-id': '76561198222102524', 'x-steam-token': '<steam-token-replaced-for-security-concerns>', 'user-agent': 'War/++UE4+Release-4.24-CL-0 Windows/6.2.9200.1.256.64bit'}, 'query_params': {}, 'body': '{\r\n\t"ModMessage": "null"\r\n}'}
+```
+- request `PUT` to `{war-support-live-server}/report`. Log `foxhole_server_20260606202238.log`
+  - specific headers: *x-steam-id*, *x-steam-token*, *user-agent*, *query_params*={}, *body*=`'{\r\n\t"EventType": "RegionConnectionAutoError",\r\n\t"Shard": 5,\r\n\t"Region": "HomeRegionW",\r\n\t"Faction": 1\r\n}'`
+  - this was sent after dummy-ying opcodes 3,9,8, and passing through opcode 23, to which server returned `received 4001 (private use) Not authenticated; then sent 4001 (private use) Not authenticated`
+  - full details:
+```
+{'url': 'http://localhost/war-support-live/report', 'method': 'PUT', 'path': 'report', 'client_host': '172.19.0.1', 'headers': {'host': 'localhost', 'x-real-ip': '172.19.0.1', 'x-forwarded-for': '172.19.0.1', 'x-forwarded-proto': 'http', 'x-forwarded-host': 'localhost', 'x-forwarded-port': '80', 'connection': 'close', 'content-length': '104', 'accept': '*/*', 'accept-encoding': 'deflate, gzip', 'content-type': 'application/json', 'x-steam-id': '76561198222102524', 'x-steam-token': '<steam-token-replaced-for-security-concerns>', 'user-agent': 'War/++UE4+Release-4.24-CL-0 Windows/6.2.9200.1.256.64bit'}, 'query_params': {}, 'body': '{\r\n\t"EventType": "RegionConnectionAutoError",\r\n\t"Shard": 5,\r\n\t"Region": "HomeRegionW",\r\n\t"Faction": 1\r\n}'}
+```
+- request `GET` to `{war-service-live-server}/shardStatus`. Log `foxhole_server_20260606202238.log`. Looks like websocket, with the following details: 
+```
+{'url': 'http://localhost/war-service-live/shardStatus', 'method': 'GET', 'path': 'shardStatus', 'client_host': '172.19.0.2', 'headers': {'connection': 'Upgrade', 'host': 'localhost', 'content-length': '0', 'accept': '*/*', 'accept-encoding': 'deflate, gzip', 'user-agent': 'War/++UE4+Release-4.24-CL-0 Windows/6.2.9200.1.256.64bit'}, 'query_params': {}, 'body': None}
+```
 - In the background, connection by Steamworks is going on. At the beginning lot of 1300 long packets, then some 55 and 100 long packets are being transmitted between different steam servers. I assume that this is process by which steam server is chosen. After this is done, the chosen server will be the recipient of all later traffic when it comes to actually playing the game. I have been unable to find in the source code a URL that I can change to redirect all of these connections to my server. However, I have a clue. I can replace Steamworks API using the Goldberg Emulator.
 
 # Websocket order
